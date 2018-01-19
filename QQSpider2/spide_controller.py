@@ -7,6 +7,8 @@ import information_spider
 import public_methods
 from multiprocessing.dummy import Pool
 
+import my_log
+log = my_log.getLogger("SpideController.log", "spider_controller.SpideController")
 
 class SpideController(object):
     """ 功能：控制去抓取日志、说说、个人信息，并保存到MongoDB """
@@ -68,7 +70,7 @@ class SpideController(object):
                     self.my_messages.db['Information'].insert(text_information)
                 except Exception, e:
                     pass
-                print "%s success:%s (Friends:%d, Blogs:%d, Moods:%d)" % (datetime.datetime.now(),
+                log.info("success:%s (Friends:%d, Blogs:%d, Moods:%d)",
                                                                           qq, text_information["FriendsNum"],
                                                                           text_information["Blogs_WeGet"],
                                                                           text_information["Moods_WeGet"])
@@ -77,6 +79,6 @@ class SpideController(object):
                         self.my_messages.filter.insert(elem)
                         self.my_messages.rconn.lpush('QQSpider:QQForSpide', elem)  # 加入待爬列表
             else:
-                print '%s failure:%s (None - http://user.qzone.qq.com/%s)' % (datetime.datetime.now(), qq, qq)
+                log.info('failure:%s (None - http://user.qzone.qq.com/%s)', qq, qq)
         except Exception, e:
-            print '%s error:%s' % (datetime.datetime.now(), qq)
+            log.exception('%s error:%s', qq, e)

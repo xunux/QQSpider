@@ -3,6 +3,8 @@ import re
 import datetime
 from multiprocessing.dummy import Pool
 
+import my_log
+log = my_log.getLogger()
 
 class MoodSpider(object):
     """ 功能：爬取QQ说说 """
@@ -22,7 +24,7 @@ class MoodSpider(object):
                         self.message.qq, (page - 1) * 20, self.message.gtk)
                     r = self.message.s.get(url, timeout=self.message.timeout)
                     if r.status_code == 403:
-                        print self.message.qq, 'status_code is 403, now stop(mood.beginer)'
+                        log.error("%s status_code is 403, now stop(mood.beginer)", self.message.qq)
                         return myMood
                     text = r.text
                     while u'请先登录空间' in text:  # Cookie失效
@@ -35,7 +37,7 @@ class MoodSpider(object):
                                 return myMood
                             text = r.text
                         except Exception:
-                            print "MoodSpider.beginer:获取Cookie失败，此线程关闭！"
+                            log.error("MoodSpider.beginer:获取Cookie失败，此线程关闭！")
                             exit()
                     textlist = re.split('\{"certified"', text)[1:]  # 从第二条开始才是说说内容
                     if len(textlist) == 0:

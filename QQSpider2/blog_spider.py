@@ -5,6 +5,8 @@ import itertools
 from bs4 import BeautifulSoup
 from multiprocessing.dummy import Pool
 
+import my_log
+log = my_log.getLogger()
 
 class BlogSpider(object):
     """ 功能：爬取QQ日志 """
@@ -47,7 +49,7 @@ class BlogSpider(object):
                             return bloglist
                         text = r.text
                     except Exception:
-                        print "BlogSpider.get_blog_list:获取Cookie失败，此线程关闭！"
+                        log.error("BlogSpider.get_blog_list:获取Cookie失败，此线程关闭！")
                         exit()
                 bidlist = re.findall('"blogId":(\d+),.*?"pubTime":"(.*?)",.*?"title":"(.*?)",.*?"commentNum":(\d+)',
                                      text, re.S)  # 发表时间、日志标题、评论数

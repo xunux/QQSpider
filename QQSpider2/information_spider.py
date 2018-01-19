@@ -2,6 +2,8 @@
 import re
 import datetime
 
+import my_log
+log = my_log.getLogger()
 
 class InformationSpider(object):
     """ 功能：爬取QQ个人信息（和空间信息） """
@@ -42,7 +44,7 @@ class InformationSpider(object):
             self.message.qq, self.message.account, str(self.message.gtk))
         r = self.message.s.get(url, timeout=self.message.timeout)
         if r.status_code == 403:
-            print '个人信息403 %s' % url
+            log.info('个人信息403 %s', url)
             return False
         text = r.text
         if "您无权访问" in text:
@@ -52,11 +54,11 @@ class InformationSpider(object):
                 self.changer.changeCookie(self.message)
                 r = self.message.s.get(url, timeout=self.message.timeout)
                 if r.status_code == 403:
-                    print '个人信息403 %s' % url
+                    log('个人信息403 %s', url)
                     return False
                 text = r.text
             except Exception, e:
-                print "InformationSpider.get_personal_information:获取Cookie失败，此线程关闭！"
+                log.info("InformationSpider.get_personal_information:获取Cookie失败，此线程关闭！")
                 exit()
         gender = re.findall('"sex":(\d+)', text)  # 性别
         age = re.findall('"age":(\d+)', text)  # 年龄
@@ -206,7 +208,7 @@ class InformationSpider(object):
             try:
                 self.changer.changeCookie(self.message)
             except Exception:
-                print "InformationSpider.get_qzone_information1:获取Cookie失败，此线程关闭！"
+                log.error("InformationSpider.get_qzone_information1:获取Cookie失败，此线程关闭！")
                 exit()
         try:
             pageView_temp1 = re.split('"modvisitcount"', text)[1]

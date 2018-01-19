@@ -4,6 +4,8 @@ import pymongo
 import datetime
 import public_methods
 
+import my_log
+log = my_log.getLogger()
 
 class InitMessages(object):
     """ 功能：信息初始化（读取保存在本地的信息，并设置爬虫的各项参数） """
@@ -17,8 +19,8 @@ class InitMessages(object):
         self.thread_num_QQ = 4  # 同时下载几个QQ的日志，每个QQ的抓取使用不同的cookie登录
         self.thread_num_Blog = 4  # 同时下载QQ的几篇日志
         self.thread_num_Mood = 8  # 同时下载QQ的几条说说
-        self.blog_after_date = datetime.datetime.strptime("2015-01-01", "%Y-%m-%d")  # 爬这个时间之后的日志
-        self.mood_after_date = datetime.datetime.strptime("2016-01-01", "%Y-%m-%d")  # 爬这个时间之后的说说
+        self.blog_after_date = datetime.datetime.strptime("2000-01-01", "%Y-%m-%d")  # 爬这个时间之后的日志
+        self.mood_after_date = datetime.datetime.strptime("2000-01-01", "%Y-%m-%d")  # 爬这个时间之后的说说
         self.readMyQQ()  # 读取我的QQ列表，用来登录
         self.readQQForSpide()  # 待爬QQ列表
         self.fail_time = 2  # 打开网页失败几次不再打开
@@ -36,10 +38,10 @@ class InitMessages(object):
                         self.rconn.set('QQSpider:Cookies:' + line, cookie)
         cookieNum = ''.join(self.rconn.keys()).count('Cookies')
         if cookieNum == 0:
-            print('QQ账号都没有cookie，请先获取cookie！')
+            log.info('QQ账号都没有cookie，请先获取cookie！')
             exit()
         else:
-            print '剩余Cookie数: %s' % cookieNum
+            log.info('剩余Cookie数: %s', cookieNum)
 
     def readQQForSpide(self, file_dir='QQForSpider.txt'):
         """ 读取待爬QQ，存入rredis的list """
